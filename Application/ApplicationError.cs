@@ -1,0 +1,24 @@
+﻿
+
+namespace Application
+{
+    public class ApplicationError
+    {
+        public string Message { get;  }
+
+        private ApplicationError(
+            
+            string message
+            ) => Message = message;
+
+        public static ApplicationError InvalidProduct => new ApplicationError("Product is null or invalid");
+        public static ApplicationError InvalidOrder => new ApplicationError("Order is null or invalid");
+        public static ApplicationError EmptyOrder => new ApplicationError("Order is empty");
+        public static ApplicationError EmptyProduct => new ApplicationError("Product is empty");
+        public static ApplicationError InvalidOrderItem => new ApplicationError("Invalid order item");
+        public static ApplicationError ConcurrencyConflict => new ApplicationError("Concurrency conflict error");
+        public static ApplicationError NotEnoughtInStock => new ApplicationError("Not enough product in stock");
+        public static ApplicationError ProductNotFound => new ApplicationError("Product is not found");
+        public static ApplicationError OrderNotFound => new ApplicationError("Order is not found");
+    }
+}

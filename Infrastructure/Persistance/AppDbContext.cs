@@ -1,0 +1,33 @@
+﻿using Domain.Aggregate.Order;
+using Domain.Aggregate.Product;
+using Infrastructure.Message;
+using Microsoft.EntityFrameworkCore;
+
+
+namespace Infrastructure.Persistance
+{
+    public class AppDbContext : DbContext
+    {
+        public DbSet<Product> Products => Set<Product>();
+
+        public DbSet<Order> Orders => Set<Order>();
+
+        public DbSet<OutboxMessage> Messages => Set<OutboxMessage>();
+
+        public AppDbContext(DbContextOptions options) : base(options) {
+        
+        }
+
+        public async Task<int> SaveChangesAsync(CancellationToken cts = default) => await base.SaveChangesAsync();
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Product>().Property(p => p.Version).IsRowVersion();
+            modelBuilder.Entity<Order>().OwnsMany(o => o.Items);
+            modelBuilder.ApplyConfiguration(new ProductConfiguration());
+            modelBuilder.ApplyConfiguration(new OutboxMessageConfiguration());
+        }
+    }
+}
