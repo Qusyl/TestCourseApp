@@ -9,6 +9,6 @@ namespace Application.Interface
 {
     public interface IUnitOfWork
     {
-        Task<Result<ApplicationError>> SaveChangesAsync();
+        Task<Result<ApplicationError>> SaveChangesAsync(CancellationToken cts = default);
     }
 }

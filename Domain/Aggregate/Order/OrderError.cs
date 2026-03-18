@@ -1,12 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
+
 
 namespace Domain.Aggregate.Order
 {
-    internal class OrderError
+    public class OrderError
     {
+        public string Message { get; }
+
+        private OrderError(string message) => Message = message;
+
+        public static OrderError InvalidOrderItemError => new OrderError("order_items_are_incorrect");
+
+
     }
 }

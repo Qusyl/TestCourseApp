@@ -1,7 +1,13 @@
 ﻿
 
 
+using Application.Interface;
+using Domain.Events;
+using Infrastructure.Persistance;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using System.Text.Json;
 
 namespace Infrastructure.BackgroundService
 {
@@ -26,7 +32,21 @@ namespace Infrastructure.BackgroundService
 
         private async Task ProcessOutboxService(CancellationToken stoppingToken)
         {
-            
+            var scope = _provider.CreateScope();
+            var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+            var publisher = scope.ServiceProvider.GetRequiredService<IEventPublisher>();
+            var messages = await context.Messages.Where(m => m.ProcessedOn == null).OrderBy(x => x.OccurredOn).Take(20).ToListAsync();
+            foreach (var message in messages) {
+                try
+                {
+                    var type = Type.GetType(message.Type);
+                    if (type == null) throw new Exception("Event type is not found");
+                    var domainEvent = (IDomainEvent)JsonSerializer.Deserialize(message.Payload, type)!;
+                    await publisher.PublishAsync();
+                }
+                
+ 
+            }
         }
     }
 }
