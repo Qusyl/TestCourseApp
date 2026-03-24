@@ -1,8 +1,10 @@
 ﻿
 
+using Application.Interface;
+
 namespace Application.Command.Order
 {
-    public class UpdateOrderCommand
+    public class UpdateOrderCommand : IEntityCommand
     {
     }
 }

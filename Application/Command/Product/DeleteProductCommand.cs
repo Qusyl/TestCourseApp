@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Application.Interface;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Application.Command.Product
 {
-    public class DeleteProductCommand
+    public class DeleteProductCommand : IEntityCommand
     {
     }
 }

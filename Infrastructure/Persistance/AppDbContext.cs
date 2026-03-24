@@ -1,5 +1,7 @@
 ﻿using Domain.Aggregate.Order;
 using Domain.Aggregate.Product;
+using Domain.Aggregate.User;
+using Infrastructure.Configuration;
 using Infrastructure.Message;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,6 +15,8 @@ namespace Infrastructure.Persistance
         public DbSet<Order> Orders => Set<Order>();
 
         public DbSet<OutboxMessage> Messages => Set<OutboxMessage>();
+
+        public DbSet<User> Users => Set<User>();
 
         public AppDbContext(DbContextOptions options) : base(options) {
         

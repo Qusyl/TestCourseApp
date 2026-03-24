@@ -42,11 +42,17 @@ namespace Infrastructure.BackgroundService
                     var type = Type.GetType(message.Type);
                     if (type == null) throw new Exception("Event type is not found");
                     var domainEvent = (IDomainEvent)JsonSerializer.Deserialize(message.Payload, type)!;
-                    await publisher.PublishAsync();
+                    await publisher.PublishAsync(domainEvent);
+
+                    message.ProcessedOn = DateTime.UtcNow;
                 }
-                
- 
+                catch (Exception ex) {
+                    message.Erorr = ex.Message;
+                    _logger.LogInformation($"ProcessOutboxException : {ex.Message}", message.Id);
+                }
+               
             }
+           await context.SaveChangesAsync(stoppingToken);
         }
     }
 }

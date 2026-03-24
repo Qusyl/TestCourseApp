@@ -1,12 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Domain.Aggregate.Product;
 
 namespace Application.Interface
 {
     public interface IProductRepository
     {
+        Task AddAsync(Product product);
+
+        Task<Product?> GetByIdAsync(Guid id);
+
+        Task<List<Product?>> GetAllAsync();
+
+        Task<List<Product?>> GetByIdAsync(List<Guid> id);
+
+
     }
 }

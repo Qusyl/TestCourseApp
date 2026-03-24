@@ -1,6 +1,4 @@
 ﻿
-
-
 using Domain.Events;
 using Domain.Events.Order;
 
@@ -9,7 +7,7 @@ namespace Domain.Aggregate.Order
     public class Order : IAggregateRoot
     {
         public Guid Id { get; private set; }
-
+        public Guid UserId { get; private set; }    
         public OrderStatus Status { get; private set; }
         private readonly List<IDomainEvent> _events = new();
         private readonly List<OrderItem> _items = new ();
@@ -19,14 +17,15 @@ namespace Domain.Aggregate.Order
 
         private Order() { }
 
-        public static Result<Order, OrderError> Create(IEnumerable<OrderItemSnapshot> items)
+        public static Result<Order, OrderError> Create(Guid userId,IEnumerable<OrderItemSnapshot> items)
         {
             if (items == null || !items.Any()) return Result<Order, OrderError>.Failure(OrderError.InvalidOrderItemError);
 
             var order = new Order
             {
                 Id = Guid.NewGuid(),
-                Status = OrderStatus.Pending
+                Status = OrderStatus.Pending,
+                UserId = userId
             };
 
             foreach (var item in items) {

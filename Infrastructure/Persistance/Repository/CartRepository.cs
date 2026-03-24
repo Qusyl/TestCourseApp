@@ -4,5 +4,6 @@ namespace Infrastructure.Persistance.Repository
 {
     public class CartRepository : ICartRepository
     {
+
     }
 }
