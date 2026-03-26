@@ -5,7 +5,7 @@ using Domain;
 
 namespace Application.Handler.User
 {
-    public class LoggingUserHandler : IHandler
+    public class LoggingUserHandler 
     {
         private readonly IUserRepository userRepository;
 
@@ -17,17 +17,13 @@ namespace Application.Handler.User
             _hasher = hasher;
         }
 
-        public async Task<Result<Guid, ApplicationError>> Handle(IEntityCommand command)
+        public async Task<Result<Guid, ApplicationError>> Handle(LoggingUserCommand command)
         {
 
-            var castCommand = command as LoggingUserCommand;
-            if (castCommand == null)
-            {
-                return Result<Guid, ApplicationError>.Failure(ApplicationError.CommandCastError);
-            }
-            var user = await userRepository.GetUserByEmail(castCommand.Email);
+            
+            var user = await userRepository.GetUserByEmail(command.Email);
 
-            if (user == null || !_hasher.Verify(castCommand.Password, user.HashPassword)) return Result<Guid, ApplicationError>.Failure(ApplicationError.InvalidCredentials);
+            if (user == null || !_hasher.Verify(command.Password, user.HashPassword)) return Result<Guid, ApplicationError>.Failure(ApplicationError.InvalidCredentials);
 
             return Result<Guid, ApplicationError>.Success(user.Id);
         }

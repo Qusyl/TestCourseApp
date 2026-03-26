@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Application.Command.User
 {
-    public class LoggingUserCommand : IEntityCommand
+    public class LoggingUserCommand
     {
         public string Email { get; }
 

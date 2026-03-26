@@ -11,7 +11,7 @@ using System.Windows.Input;
 
 namespace Application.Command.Order
 {
-    public class CreateOrderCommand : IEntityCommand
+    public class CreateOrderCommand 
     {
         public List<OrderItemDto> Items { get; }
 

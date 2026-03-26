@@ -7,7 +7,7 @@ using Domain.Aggregate.Order;
 
 namespace Application.Handler.Order
 {
-    public class CreateOrderHandler : IHandler
+    public class CreateOrderHandler 
     {
         private readonly IOrderRepository _repository;
 
@@ -22,43 +22,39 @@ namespace Application.Handler.Order
             _unit = unit;
         }
 
-        public async Task<Result<Guid, ApplicationError>> Handle(IEntityCommand command)
+        public async Task<Result<Guid, ApplicationError>> Handle(CreateOrderCommand command)
         {
-            var castCommand = command as CreateOrderCommand;
+            
 
-            if (castCommand == null) {
-                return Result<Guid, ApplicationError>.Failure(ApplicationError.CommandCastError);
-            }
+            if (command.Items.Count == 0) return Result<Guid, ApplicationError>.Failure(ApplicationError.InvalidOrderItem);
 
-            if (castCommand.Items.Count == 0) return Result<Guid, ApplicationError>.Failure(ApplicationError.InvalidOrderItem);
-
-            var productIds = castCommand.Items.Select(x => x.productId)
+            var productIds = command.Items.Select(x => x.productId)
                 .Distinct()
                 .ToList();
 
             var products = await _productRepository.GetByIdAsync(productIds);
 
-            if(products.Count  != productIds.Count)
+            if (products.Count != productIds.Count)
             {
                 return Result<Guid, ApplicationError>.Failure(ApplicationError.ProductNotFound);
             }
 
             var productDict = products.ToDictionary(p => p.Id);
-            foreach (var item in castCommand.Items) {
+            foreach (var item in command.Items) {
                 if (!productDict.TryGetValue(item.productId, out var product))
                 {
-                    var reserve = product.ReserveStock(item.Quantity);
-                    if (!reserve.IsSuccess)
-                    {
-                        return Result<Guid, ApplicationError>.Failure(ApplicationError.NotEnoughtInStock);
-                    }
+                    return Result<Guid, ApplicationError>.Failure(ApplicationError.ProductNotFound);
                 }
+                var reserve = product.ReserveStock(item.Quantity);
+                if (!reserve.IsSuccess)
+                {
+                    return Result<Guid, ApplicationError>.Failure(ApplicationError.NotEnoughtInStock);
+                }
+            } 
 
-            }
+            var snapshot = command.Items.Select(x => new OrderItemSnapshot(x.productId, x.Quantity)).ToList();
 
-            var snapshot = castCommand.Items.Select(x => new OrderItemSnapshot(x.productId, x.Quantity)).ToList();
-
-            var orderRes = Domain.Aggregate.Order.Order.Create(castCommand.UserId,snapshot);
+            var orderRes = Domain.Aggregate.Order.Order.Create(command.UserId,snapshot);
 
             if (!orderRes.IsSuccess)
             {

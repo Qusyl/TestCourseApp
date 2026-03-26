@@ -56,6 +56,11 @@ namespace Domain.Aggregate.Cart
             return Result<CartError>.Success;
         }
 
+        public void RemoveItem(Guid productId)
+        {
+            _items.RemoveAll(x => x.ProductId == productId);
+        }
+
         public void ClearEvents()
         {
          _events.Clear();

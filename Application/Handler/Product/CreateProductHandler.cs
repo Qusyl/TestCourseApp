@@ -5,7 +5,7 @@ using Domain.Aggregate.Product;
 
 namespace Application.Handler.Product
 {
-    public class CreateProductHandler : IHandler
+    public class CreateProductHandler
     {
         private readonly IProductRepository _repository;
 
@@ -17,7 +17,7 @@ namespace Application.Handler.Product
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<Result<Guid, ApplicationError>> Handle(IEntityCommand command)
+        public async Task<Result<Guid, ApplicationError>> Handle(CreateProductCommand command)
         {
             var castCommand = command as CreateProductCommand;
 

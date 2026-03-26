@@ -5,23 +5,18 @@ using Domain;
 
 namespace Application.Handler.User
 {
-    public class RegisterUserHandler : IHandler
+    public class RegisterUserHandler
     {
         private readonly IUserRepository _userRepos;
 
         private readonly IPasswordHasher _hasher;
         private readonly IUnitOfWork _unitOfWork;
-        public async Task<Result<Guid, ApplicationError>> Handle(IEntityCommand command)
+        public async Task<Result<Guid, ApplicationError>> Handle(RegisterUserCommand command)
         {
-           var comCast = command as RegisterUserCommand;
+          
+            var hash = _hasher.Hash(command.Password);
 
-            if (comCast == null) 
-            {
-                return Result<Guid, ApplicationError>.Failure(ApplicationError.CommandCastError);
-            }
-            var hash = _hasher.Hash(comCast.Password);
-
-            var userRes = Domain.Aggregate.User.User.Create(comCast.Email, hash);
+            var userRes = Domain.Aggregate.User.User.Create(command.Email, hash);
             if (!userRes.IsSuccess)
             {
                 return Result<Guid,ApplicationError>.Failure(ApplicationError.InvalidUserData);

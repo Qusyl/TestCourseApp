@@ -7,7 +7,10 @@ using System.Threading.Tasks;
 
 namespace Application.Command.Product
 {
-    public class DeleteProductCommand 
+    public class GetProductByIdCommand
     {
+        public Guid UserId;
+
+        public Guid ProductId;
     }
 }

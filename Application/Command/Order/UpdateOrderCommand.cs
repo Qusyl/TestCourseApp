@@ -4,7 +4,7 @@ using Application.Interface;
 
 namespace Application.Command.Order
 {
-    public class UpdateOrderCommand : IEntityCommand
+    public class UpdateOrderCommand 
     {
     }
 }

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Application.Handler.Product
 {
-    public class DeleteProductHandler : IHandler
+    public class DeleteProductHandler 
     {
     }
 }

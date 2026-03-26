@@ -3,7 +3,7 @@
 
 namespace Application.Handler.Order
 {
-    public class DeleteOrderHandler : IHandler
+    public class DeleteOrderHandler 
     {
     }
 }

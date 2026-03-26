@@ -5,9 +5,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Application.Command.Product
+namespace Application.Command.Cart
 {
-    public class DeleteProductCommand 
+    public class RemoveFromCartCommand 
     {
+        public Guid ProductId;
+
+        public Guid UserId;
     }
 }
