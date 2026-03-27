@@ -15,17 +15,25 @@ namespace Application.Handler.Order
 
         private readonly IUnitOfWork _unit;
 
-        public CreateOrderHandler(IOrderRepository repository, IProductRepository productRepository, IUnitOfWork unit)
+        private readonly ICurrentUserService _currentUser;
+
+        public CreateOrderHandler(IOrderRepository repository, IProductRepository productRepository, IUnitOfWork unit, ICurrentUserService currentUser)
         {
             _repository = repository;
             _productRepository = productRepository;
             _unit = unit;
+            _currentUser = currentUser;
         }
 
         public async Task<Result<Guid, ApplicationError>> Handle(CreateOrderCommand command)
         {
-            
 
+            var findUser = _currentUser.GetUserId();
+            if (!findUser.IsSuccess)
+            {
+                return Result<Guid, ApplicationError>.Failure(ApplicationError.NotAuthorized);
+            }
+            var userId = findUser.Value;
             if (command.Items.Count == 0) return Result<Guid, ApplicationError>.Failure(ApplicationError.InvalidOrderItem);
 
             var productIds = command.Items.Select(x => x.productId)
@@ -54,7 +62,7 @@ namespace Application.Handler.Order
 
             var snapshot = command.Items.Select(x => new OrderItemSnapshot(x.productId, x.Quantity)).ToList();
 
-            var orderRes = Domain.Aggregate.Order.Order.Create(command.UserId,snapshot);
+            var orderRes = Domain.Aggregate.Order.Order.Create(userId, snapshot);
 
             if (!orderRes.IsSuccess)
             {

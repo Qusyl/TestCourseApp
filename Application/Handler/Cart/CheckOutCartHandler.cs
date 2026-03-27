@@ -8,16 +8,22 @@ namespace Application.Handler.Cart
 {
     public class CheckOutCartHandler
     {
-        private ICartRepository _repos;
-
-        public CheckOutCartHandler(ICartRepository cartRepository)
+        private readonly ICartRepository _repos;
+        private readonly ICurrentUserService _currentUser;
+        public CheckOutCartHandler(ICartRepository cartRepository, ICurrentUserService currentUser)
         {
             _repos = cartRepository;
+            _currentUser = currentUser;
         }
         public async Task<Result<Guid, ApplicationError>> Handle(CheckOutCartCommand command)
         {
-           
-            var cart = await _repos.GetByIdAsync(command.ProductId);
+            var findUser = _currentUser.GetUserId();
+            if (!findUser.IsSuccess)
+            {
+                return Result<Guid, ApplicationError>.Failure(ApplicationError.NotAuthorized);
+            }
+            var userId = findUser.Value;
+            var cart = await _repos.GetByIdAsync(userId);
 
             if (cart == null) {
                 return Result<Guid, ApplicationError>.Failure(ApplicationError.CartNotFound);

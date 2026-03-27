@@ -2,7 +2,7 @@
 using Application.Handler.Order;
 using Microsoft.AspNetCore.Mvc;
 
-namespace TestCourseApp.Controllers.Product
+namespace TestCourseApp.Controllers.Order
 {
     [ApiController]
     [Route("api/order")]

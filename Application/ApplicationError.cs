@@ -23,6 +23,9 @@ namespace Application
         public static ApplicationError ProductNotFound => new ApplicationError("Product is not found");
         public static ApplicationError OrderNotFound => new ApplicationError("Order is not found");
         public static ApplicationError CartNotFound => new ApplicationError("Cart is not found");
+        public static ApplicationError NotAuthorized => new ApplicationError("Cart is not found");
+
+       
 
         public static ApplicationError InvalidCredentials => new ApplicationError("Invalid Credentials for logging");
 

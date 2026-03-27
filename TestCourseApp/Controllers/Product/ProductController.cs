@@ -1,7 +1,5 @@
 ﻿using Application.Command.Product;
 using Application.Handler.Product;
-using Domain.Aggregate.Product;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace TestCourseApp.Controllers.Product
@@ -16,14 +14,20 @@ namespace TestCourseApp.Controllers.Product
 
         private readonly GetProductsHandler _getProductsHandler;
 
-        public ProductController(CreateProductHandler createProductHandler)
+        public ProductController(CreateProductHandler createProductHandler, GetProductByIdHandler getProductByIdHandler, GetProductsHandler getProductsHandler)
         {
             _createProductHandler = createProductHandler;
+            _getProductByIdHandler = getProductByIdHandler;
+            _getProductsHandler = getProductsHandler;
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Create(CreateProductCommand command)
+        [HttpPost("add")]
+        public async Task<IActionResult> Create([FromBody] CreateProductCommand command)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             var res = await _createProductHandler.Handle(command);
 
             if (!res.IsSuccess)
@@ -31,12 +35,16 @@ namespace TestCourseApp.Controllers.Product
                 return BadRequest(res.Error);
             }
 
-            return Ok(res.Value);
+            return CreatedAtAction(nameof(GetById), new { id = res.Value }, res.Value);
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Domain.Aggregate.Product.Product>>> GetAll(GetAllProductCommand command)
+        public async Task<ActionResult<IEnumerable<Domain.Aggregate.Product.Product>>> GetAll([FromQuery] GetAllProductCommand command)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
            var products = await _getProductsHandler.Handle(command);
             if (!products.IsSuccess)
             {
@@ -45,10 +53,14 @@ namespace TestCourseApp.Controllers.Product
             return Ok(products.Value);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{command.UserId}")]
 
         public async Task<IActionResult> GetById(GetProductByIdCommand command)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             var product = await _getProductByIdHandler.Handle(command);
 
             if(!product.IsSuccess) return BadRequest(product.Error);

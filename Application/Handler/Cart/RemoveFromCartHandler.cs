@@ -11,17 +11,25 @@ namespace Application.Handler.Cart
 
         private readonly IUnitOfWork _unitOfWork;
 
-        public RemoveFromCartHandler(ICartRepository cartRepository, IUnitOfWork unitOfWork)
+        private readonly ICurrentUserService _currentUser;
+
+        public RemoveFromCartHandler(ICartRepository cartRepository, IUnitOfWork unitOfWork, ICurrentUserService currentUser)
         {
             _cartRepository = cartRepository;
             _unitOfWork = unitOfWork;
+            _currentUser = currentUser;
         }
 
         public async Task<Result<Guid, ApplicationError>> Handle(RemoveFromCartCommand command)
         {
-            
+            var findUser = _currentUser.GetUserId();
+            if (!findUser.IsSuccess)
+            {
+                return Result<Guid, ApplicationError>.Failure(ApplicationError.NotAuthorized);
+            }
+            var userId = findUser.Value;
 
-            var cart = await _cartRepository.GetByIdAsync(command.UserId);
+            var cart = await _cartRepository.GetByIdAsync(userId);
 
             if(cart == null)
             {

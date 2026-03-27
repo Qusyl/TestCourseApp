@@ -13,15 +13,23 @@ namespace Application.Handler.Cart
     {
         private readonly ICartRepository _repos;
         private readonly IUnitOfWork _unit;
-        public AddToCartHandler(ICartRepository repos, IUnitOfWork unit)
+        private readonly ICurrentUserService _currentUser;
+        public AddToCartHandler(ICartRepository repos, IUnitOfWork unit, ICurrentUserService currentUser)
         {
             _repos = repos;
             _unit = unit;
+            _currentUser = currentUser;
         }
         public async Task<Result<Guid, ApplicationError>> Handle(AddToCartCommand command)
         {
-  
-            var cart = await _repos.GetByIdAsync(command.UserId);
+
+            var findUser = _currentUser.GetUserId();
+            if (!findUser.IsSuccess)
+            {
+                return Result<Guid, ApplicationError>.Failure(ApplicationError.NotAuthorized);
+            }
+            var userId = findUser.Value;
+            var cart = await _repos.GetByIdAsync(userId);
 
             if(cart == null)
             {

@@ -3,8 +3,8 @@
 
 namespace Application.Command.Cart
 {
-    public class CheckOutCartCommand 
-    {
-        public Guid ProductId;
+    public class CheckOutCartCommand
+    { 
+
     }
 }

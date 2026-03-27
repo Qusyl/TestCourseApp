@@ -1,13 +1,16 @@
+using Application;
 using Application.Handler.Cart;
 using Application.Handler.Order;
 using Application.Handler.Product;
 using Application.Handler.User;
 using Application.Interface;
 using Infrastructure.BackgroundService;
-using Infrastructure.Message;
+
 using Infrastructure.Persistance;
 using Infrastructure.Persistance.Repository;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,6 +28,10 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 builder.Services.AddHostedService<OutboxProcessService>();
 
+builder.Services.AddHttpContextAccessor();
+
+builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
+
 builder.Services.AddScoped<CreateOrderHandler>();
 
 builder.Services.AddScoped<CreateProductHandler>();
@@ -38,6 +45,21 @@ builder.Services.AddScoped<LoggingUserHandler>();
 builder.Services.AddScoped<AddToCartHandler>();
 
 builder.Services.AddScoped<RemoveFromCartHandler>();
+
+builder.Services.AddAuthentication("Bearer").AddJwtBearer("Bearer", options =>
+
+    options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+    {
+        ValidateIssuer = false,
+        ValidateIssuerSigningKey = true,
+        ValidateLifetime = true,
+        ValidateAudience = false,
+        IssuerSigningKey = new SymmetricSecurityKey(
+            Encoding.UTF8.GetBytes("SUPER_SECRET_KEY_321"))
+    }
+);
+
+builder.Services.AddAuthorization();
 
 builder.Services.AddControllers();
 
@@ -53,6 +75,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseExceptionHandler();

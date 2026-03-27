@@ -19,14 +19,9 @@ namespace Application.Handler.Product
 
         public async Task<Result<Guid, ApplicationError>> Handle(CreateProductCommand command)
         {
-            var castCommand = command as CreateProductCommand;
+            
 
-            if (castCommand == null)
-            {
-                return Result<Guid, ApplicationError>.Failure(ApplicationError.CommandCastError);
-            }
-
-            var res = Domain.Aggregate.Product.Product.Create(castCommand.Name, castCommand.Price, castCommand.Stock);
+            var res = Domain.Aggregate.Product.Product.Create(command.Name, command.Price, command.Stock);
 
             if(!res.IsSuccess) return Result<Guid, ApplicationError>.Failure(ApplicationError.InvalidProduct);
 

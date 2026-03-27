@@ -14,7 +14,5 @@ namespace Application.Command.Order
     public class CreateOrderCommand 
     {
         public List<OrderItemDto> Items { get; }
-
-        public Guid UserId { get;  }
     }
 }
