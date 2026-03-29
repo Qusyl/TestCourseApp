@@ -16,12 +16,12 @@ namespace Infrastructure.Persistance
         public DbSet<Order> Orders => Set<Order>();
 
         public DbSet<Cart> Carts => Set<Cart>();
-
+        
         public DbSet<OutboxMessage> Messages => Set<OutboxMessage>();
 
         public DbSet<User> Users => Set<User>();
 
-        public AppDbContext(DbContextOptions options) : base(options) {
+        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) {
         
         }
 
@@ -33,6 +33,11 @@ namespace Infrastructure.Persistance
 
             modelBuilder.Entity<Product>().Property(p => p.Version).IsRowVersion();
             modelBuilder.Entity<Order>().OwnsMany(o => o.Items);
+            modelBuilder.Entity<Cart>().OwnsMany(o => o.Items, b => {
+                b.WithOwner().HasForeignKey("CartId");
+                b.HasKey("CartId", "ProductId");
+            });
+            modelBuilder.Entity<Cart>().Navigation(c => c.Items).UsePropertyAccessMode(PropertyAccessMode.Field);
             modelBuilder.ApplyConfiguration(new ProductConfiguration());
             modelBuilder.ApplyConfiguration(new OutboxMessageConfiguration());
             modelBuilder.ApplyConfiguration(new UserConfiguration());

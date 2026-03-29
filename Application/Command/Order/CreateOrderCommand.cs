@@ -13,6 +13,6 @@ namespace Application.Command.Order
 {
     public class CreateOrderCommand 
     {
-        public List<OrderItemDto> Items { get; }
+        public List<OrderItemDto> Items { get; set; }
     }
 }

@@ -3,7 +3,7 @@
 using Application.Command.Product;
 using Application.Interface;
 using Domain;
-using Domain.Aggregate.Product;
+
 
 namespace Application.Handler.Product
 {

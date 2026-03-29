@@ -13,8 +13,6 @@ namespace Infrastructure.Message
             _logger = logger;
         }
 
-
-
         public Task PublishAsync(IDomainEvent domainEvent)
         {
             _logger.LogInformation($"Publish event : {domainEvent}", domainEvent.GetType().Name);

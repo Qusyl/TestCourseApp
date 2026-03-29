@@ -11,15 +11,16 @@ namespace Application
     public class TokenService : ITokenService
     {
        
-        public string Generate(Guid userId)
+        public string Generate(Guid userId, string role)
         {
             var claims = new[]
             {
-                new Claim("id", userId.ToString())
+                new Claim("id", userId.ToString()),
+                new Claim(ClaimTypes.Role, role )
 
           };
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("SUPER_SECRET_KEY_321"));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("SUPER_SECRET_KEY_FOR_THIS_SUPER_PROJECT_YOU_KNOW_123"));
 
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 

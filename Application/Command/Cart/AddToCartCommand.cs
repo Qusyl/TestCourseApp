@@ -5,8 +5,8 @@ namespace Application.Command.Cart
 {
     public class AddToCartCommand 
     {
-        public Guid ProductId;
+        public Guid ProductId { get; set; }
        
-        public int Quantity;
+        public int Quantity { get; set; }
     }
 }

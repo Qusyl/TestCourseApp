@@ -10,6 +10,8 @@ namespace Domain.Aggregate.User
 
         public string HashPassword { get; private set; }
 
+        public UserRole Role { get; private set; }
+
         private User() {}
 
         public static Result<User,UserError> Create(string email, string password)
@@ -27,7 +29,8 @@ namespace Domain.Aggregate.User
             {
                 Id = Guid.NewGuid(),
                 Email = email,
-                HashPassword = password
+                HashPassword = password,
+                Role = UserRole.User
             };
             return Result<User, UserError>.Success(user);
         }

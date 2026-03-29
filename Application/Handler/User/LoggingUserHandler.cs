@@ -27,7 +27,7 @@ namespace Application.Handler.User
 
             if (user == null || !_hasher.Verify(command.Password, user.HashPassword)) return Result<AuthResult, ApplicationError>.Failure(ApplicationError.InvalidCredentials);
 
-            var token = _tokenService.Generate(user.Id);
+            var token = _tokenService.Generate(user.Id, user.Role.ToString());
 
             return Result<AuthResult, ApplicationError>.Success(new AuthResult(token));
         }

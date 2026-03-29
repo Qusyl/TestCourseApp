@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace TestCourseApp.Controllers.Cart
 {
     [Authorize]
+    [Route("api/cart")]
     public class CartController : ControllerBase
     {
         private readonly CheckOutCartHandler _checkOutCartHandler;

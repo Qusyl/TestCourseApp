@@ -9,8 +9,7 @@ namespace Application.Command.Product
 {
     public class GetProductByIdCommand
     {
-        public Guid UserId;
 
-        public Guid ProductId;
+        public Guid ProductId {  get; set; }    
     }
 }

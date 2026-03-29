@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Application.Interface
+namespace Application.Command.Order
 {
-    public interface ITokenService
+    public class GetAllOrderByIdCommand
     {
-        string Generate(Guid userId, string role);
+
     }
 }

@@ -20,6 +20,11 @@ namespace Infrastructure.Persistance.Repository
            await _context.Users.AddAsync(user);
         }
 
+        public async Task<User?> GetUserByEmail(string email)
+        {
+           return await _context.Users.FirstOrDefaultAsync(u =>  u.Email == email);
+        }
+
         public async Task<User?> GetUserByIdAsync(Guid id)
         {
            return await _context.Users.FirstOrDefaultAsync(u => u.Id == id);   

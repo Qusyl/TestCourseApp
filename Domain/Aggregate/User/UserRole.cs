@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Application.Interface
+namespace Domain.Aggregate.User
 {
-    public interface ITokenService
+    public enum  UserRole
     {
-        string Generate(Guid userId, string role);
+        User,
+        Admin
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Application.Interface;
 using Domain;
 using Domain.Aggregate.Order;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Persistance.Repository
 {
@@ -29,6 +30,11 @@ namespace Infrastructure.Persistance.Repository
         public async Task AddAsync(Order order)
         {
             await _context.Orders.AddAsync(order);
+        }
+
+        public async Task<List<Order>> GetAllByIdAsync(Guid userId)
+        {
+            return await _context.Orders.Where(o => o.UserId == userId).ToListAsync();
         }
     }
 }

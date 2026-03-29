@@ -7,6 +7,7 @@ namespace Application.Interface
     {
         Task<Cart?> GetByIdAsync(Guid userId);
 
+        Task AddAsync(Cart cart);
 
      }
 }

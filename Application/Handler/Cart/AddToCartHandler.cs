@@ -1,6 +1,7 @@
 ﻿using Application.Command.Cart;
 using Application.Interface;
 using Domain;
+using Domain.Aggregate.Cart;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,7 +34,13 @@ namespace Application.Handler.Cart
 
             if(cart == null)
             {
-                return Result<Guid, ApplicationError>.Failure(ApplicationError.CartNotFound);
+                var cartResCreate = Domain.Aggregate.Cart.Cart.Create(userId);
+                if (!cartResCreate.IsSuccess)
+                {
+                   return Result<Guid, ApplicationError>.Failure(ApplicationError.CartNotFound);
+                }
+                cart = cartResCreate.Value;
+                await _repos.AddAsync(cart);
             }
 
            var addRes = cart.AddItem(command.ProductId, command.Quantity);

@@ -21,13 +21,10 @@ namespace TestCourseApp.Controllers.Product
             _getProductsHandler = getProductsHandler;
         }
 
-        [HttpPost("add")]
+        [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateProductCommand command)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+            
             var res = await _createProductHandler.Handle(command);
 
             if (!res.IsSuccess)
@@ -35,17 +32,13 @@ namespace TestCourseApp.Controllers.Product
                 return BadRequest(res.Error);
             }
 
-            return CreatedAtAction(nameof(GetById), new { id = res.Value }, res.Value);
+            return Created($"api/products/{res.Value}", res.Value);
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Domain.Aggregate.Product.Product>>> GetAll([FromQuery] GetAllProductCommand command)
+        public async Task<IActionResult> GetAll()
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-           var products = await _getProductsHandler.Handle(command);
+           var products = await _getProductsHandler.Handle(new GetAllProductCommand());
             if (!products.IsSuccess)
             {
                 return BadRequest();
@@ -53,14 +46,11 @@ namespace TestCourseApp.Controllers.Product
             return Ok(products.Value);
         }
 
-        [HttpGet("{command.UserId}")]
+        [HttpGet("{id}")]
 
-        public async Task<IActionResult> GetById(GetProductByIdCommand command)
+        public async Task<IActionResult> GetById(Guid id)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+            var command = new GetProductByIdCommand { ProductId = id};
             var product = await _getProductByIdHandler.Handle(command);
 
             if(!product.IsSuccess) return BadRequest(product.Error);

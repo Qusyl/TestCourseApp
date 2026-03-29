@@ -5,9 +5,9 @@ namespace Application.Command.Product
 {
     public class CreateProductCommand 
     {
-        public string Name { get; }
-        public int Stock { get; }
+        public string Name { get; set; }
+        public int Stock { get; set; }
 
-        public decimal Price { get; }   
+        public decimal Price { get; set; }   
     }
 }

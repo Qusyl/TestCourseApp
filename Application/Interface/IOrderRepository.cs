@@ -13,5 +13,7 @@ namespace Application.Interface
         Task AddAsync(Result<Order, OrderError> order);
 
         Task AddAsync(Order order);
+
+        Task<List<Order>> GetAllByIdAsync(Guid userId);
     }
 }
