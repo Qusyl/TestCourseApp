@@ -24,6 +24,7 @@ namespace Application
         public static ApplicationError OrderNotFound => new ApplicationError("Order is not found");
         public static ApplicationError CartNotFound => new ApplicationError("Cart is not found");
         public static ApplicationError NotAuthorized => new ApplicationError("Cart is not found");
+        public static ApplicationError InvalidCommand => new ApplicationError("Invalid Command");
 
        
 

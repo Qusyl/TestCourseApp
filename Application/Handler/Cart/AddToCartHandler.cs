@@ -1,12 +1,8 @@
 ﻿using Application.Command.Cart;
 using Application.Interface;
 using Domain;
-using Domain.Aggregate.Cart;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.Extensions.Caching.Memory;
+
 
 namespace Application.Handler.Cart
 {
@@ -15,11 +11,13 @@ namespace Application.Handler.Cart
         private readonly ICartRepository _repos;
         private readonly IUnitOfWork _unit;
         private readonly ICurrentUserService _currentUser;
-        public AddToCartHandler(ICartRepository repos, IUnitOfWork unit, ICurrentUserService currentUser)
+        private readonly IMemoryCache _memoryCache;
+        public AddToCartHandler(ICartRepository repos, IUnitOfWork unit, ICurrentUserService currentUser, IMemoryCache memoryCache)
         {
             _repos = repos;
             _unit = unit;
             _currentUser = currentUser;
+            _memoryCache = memoryCache;
         }
         public async Task<Result<Guid, ApplicationError>> Handle(AddToCartCommand command)
         {
@@ -55,6 +53,7 @@ namespace Application.Handler.Cart
             {
                 return Result<Guid, ApplicationError>.Failure(ApplicationError.ConcurrencyConflict);
             }
+            _memoryCache.Remove("CartCache");
 
             return Result<Guid, ApplicationError>.Success(cart.Id);
         }

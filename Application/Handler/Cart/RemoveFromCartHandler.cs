@@ -1,6 +1,7 @@
 ﻿using Application.Command.Cart;
 using Application.Interface;
 using Domain;
+using Microsoft.Extensions.Caching.Memory;
 
 
 namespace Application.Handler.Cart
@@ -10,14 +11,15 @@ namespace Application.Handler.Cart
         private readonly ICartRepository _cartRepository;
 
         private readonly IUnitOfWork _unitOfWork;
-
+        private readonly IMemoryCache _memoryCache;
         private readonly ICurrentUserService _currentUser;
 
-        public RemoveFromCartHandler(ICartRepository cartRepository, IUnitOfWork unitOfWork, ICurrentUserService currentUser)
+        public RemoveFromCartHandler(ICartRepository cartRepository, IUnitOfWork unitOfWork, ICurrentUserService currentUser, IMemoryCache memoryCache)
         {
             _cartRepository = cartRepository;
             _unitOfWork = unitOfWork;
             _currentUser = currentUser;
+            _memoryCache = memoryCache;
         }
 
         public async Task<Result<Guid, ApplicationError>> Handle(RemoveFromCartCommand command)
@@ -44,6 +46,9 @@ namespace Application.Handler.Cart
             {
                 return Result<Guid, ApplicationError>.Failure(ApplicationError.ConcurrencyConflict);
             }
+
+            _memoryCache.Remove("CartCache");
+            _memoryCache.Remove($"Cart_{cart.Id}");
             return Result<Guid, ApplicationError>.Success(cart.Id);
         }
     }

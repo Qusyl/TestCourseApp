@@ -2,6 +2,8 @@
 using Application.Interface;
 using Domain;
 using Domain.Aggregate.Order;
+using Microsoft.Extensions.Caching.Memory;
+using System.Text.RegularExpressions;
 
 
 namespace Application.Handler.Cart
@@ -14,9 +16,11 @@ namespace Application.Handler.Cart
         {
             _repos = cartRepository;
             _currentUser = currentUser;
+            
         }
         public async Task<Result<Guid, ApplicationError>> Handle(CheckOutCartCommand command)
         {
+       
             var findUser = _currentUser.GetUserId();
             if (!findUser.IsSuccess)
             {
@@ -42,5 +46,6 @@ namespace Application.Handler.Cart
 
             return Result<Guid, ApplicationError>.Success(orderRes.Value.Id);
         }
+       
     }
 }

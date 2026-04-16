@@ -14,8 +14,25 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddMemoryCache(options => {
+    options.SizeLimit = 1024;
+    options.TrackStatistics = true;
+    options.ExpirationScanFrequency = TimeSpan.FromSeconds(30);
+});
 
-builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+ThreadPool.SetMinThreads(200, 200);
+builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"), npgAction => npgAction.EnableRetryOnFailure(5, TimeSpan.FromSeconds(3),null )));
+
+builder.Services.ConfigureHttpClientDefaults(http =>
+{
+    http.ConfigurePrimaryHttpMessageHandler(() => new SocketsHttpHandler
+    {
+        PooledConnectionLifetime = TimeSpan.FromMinutes(5),
+        PooledConnectionIdleTimeout = TimeSpan.FromMinutes(2),
+        MaxConnectionsPerServer = 100
+    });
+}
+);
 
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 
